@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Crop, Compress & DPI Tool</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Cropper.js -->
+  <link href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
+
+  <!-- Image Compression -->
+  <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.0/dist/browser-image-compression.js"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-3xl mx-auto bg-white rounded shadow p-6 space-y-4">
+    <h1 class="text-2xl font-bold mb-2">🖼️ Image Crop, Compress & DPI Tool</h1>
+
+    <input type="file" accept="image/png, image/jpeg" id="imageInput" class="mb-4 border p-2 w-full" />
+
+    <div class="w-full overflow-auto">
+      <img id="previewImage" class="max-w-full max-h-[500px]" />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <label>
+        Compression Quality (0.1 - 1):
+        <input type="number" step="0.1" max="1" min="0.1" id="qualityInput" value="0.8" class="border p-2 w-full" />
+      </label>
+      <label>
+        Target DPI (e.g. 72, 150, 300):
+        <input type="number" id="dpiInput" value="72" class="border p-2 w-full" />
+      </label>
+    </div>
+
+    <button id="processBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
+      ✂️ Process & Download
+    </button>
+  </div>
+
+  <script>
+    let cropper;
+    const imageInput = document.getElementById("imageInput");
+    const previewImage = document.getElementById("previewImage");
+
+    imageInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        previewImage.src = reader.result;
+
+        if (cropper) cropper.destroy();
+        cropper = new Cropper(previewImage, {
+          aspectRatio: NaN,
+          viewMode: 1,
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById("processBtn").addEventListener("click", async () => {
+      if (!cropper) return alert("Upload and crop an image first.");
+
+      const quality = parseFloat(document.getElementById("qualityInput").value);
+      const targetDpi = parseInt(document.getElementById("dpiInput").value);
+
+      const croppedCanvas = cropper.getCroppedCanvas();
+      if (!croppedCanvas) return alert("Crop the image first.");
+
+      const blob = await new Promise(resolve => croppedCanvas.toBlob(resolve, "image/jpeg", quality));
+      const file = new File([blob], "cropped.jpg", { type: "image/jpeg" });
+
+      const options = {
+        maxWidth: croppedCanvas.width,
+        maxHeight: croppedCanvas.height,
+        initialQuality: quality,
+        useWebWorker: true,
+      };
+
+      const compressedBlob = await imageCompression(file, options);
+
+      // DPI manipulation (resampling)
+      const dpiRatio = targetDpi / 72;
+      const finalCanvas = document.createElement("canvas");
+      finalCanvas.width = croppedCanvas.width * dpiRatio;
+      finalCanvas.height = croppedCanvas.height * dpiRatio;
+      const ctx = finalCanvas.getContext("2d");
+      ctx.drawImage(croppedCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
+
+      finalCanvas.toBlob((finalBlob) => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(finalBlob);
+        link.download = "processed_image.jpg";
+        link.click();
+      }, "image/jpeg", quality);
+    });
+  </script>
+</body>
+</html>
