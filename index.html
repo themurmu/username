@@ -1,104 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Image Crop, Compress & DPI Tool</title>
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Cropper.js -->
-  <link href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet">
-  <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
-
-  <!-- Image Compression -->
-  <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.0/dist/browser-image-compression.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Username Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-6">
-  <div class="max-w-3xl mx-auto bg-white rounded shadow p-6 space-y-4">
-    <h1 class="text-2xl font-bold mb-2">🖼️ Image Crop, Compress & DPI Tool</h1>
 
-    <input type="file" accept="image/png, image/jpeg" id="imageInput" class="mb-4 border p-2 w-full" />
+<body class="min-h-screen flex flex-col bg-white text-gray-900">
 
-    <div class="w-full overflow-auto">
-      <img id="previewImage" class="max-w-full max-h-[500px]" />
-    </div>
+    <!-- Navbar -->
+    <nav class="border-b bg-white px-4 py-3">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="text-lg font-semibold">Username Generator</div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-      <label>
-        Compression Quality (0.1 - 1):
-        <input type="number" step="0.1" max="1" min="0.1" id="qualityInput" value="0.8" class="border p-2 w-full" />
-      </label>
-      <label>
-        Target DPI (e.g. 72, 150, 300):
-        <input type="number" id="dpiInput" value="72" class="border p-2 w-full" />
-      </label>
-    </div>
+            <div class="hidden md:flex space-x-6 text-sm font-medium">
+                <a href="#" class="hover:text-black">Home</a>
+              
+            </div>
 
-    <button id="processBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
-      ✂️ Process & Download
-    </button>
-  </div>
+            <button id="menu-btn" class="md:hidden focus:outline-none">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
 
-  <script>
-    let cropper;
-    const imageInput = document.getElementById("imageInput");
-    const previewImage = document.getElementById("previewImage");
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden mt-3 space-y-2 px-4 text-sm font-medium">
+            <a href="#" class="block hover:text-black">Home</a>
+            
+        </div>
+    </nav>
 
-    imageInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+    <!-- Main Content -->
+    <main class="flex-grow">
+        <div class="mx-auto  mt-4 max-w-7xl space-y-4 px-4 py-4 font-serif text-lg tracking-wide text-gray-700">
+            <h1 class="text-2xl font-bold text-center mb-6">Live  Username Generator</h1>
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        previewImage.src = reader.result;
+            <!-- Form for input and category selection -->
+            <form class="flex flex-col gap-4 max-w-xl mx-auto">
+                <div>
+                    <label for="categorySelect" class="block text-sm font-medium mb-1">Select your brand or name
+                        category:</label>
+                    <select id="categorySelect" class="w-full p-2 border border-gray-300 rounded-md" required>
+                        <!-- Options will be dynamically populated here -->
+                    </select>
+                </div>
 
-        if (cropper) cropper.destroy();
-        cropper = new Cropper(previewImage, {
-          aspectRatio: NaN,
-          viewMode: 1,
+                <div>
+                    <label for="inputText" class="block text-sm font-medium mb-1">Enter your name or brand:</label>
+                    <textarea id="inputText" class="w-full p-2 border border-gray-300 rounded-md" rows="3"
+                        maxlength="100" required placeholder="Enter your name or brand here..."></textarea>
+                </div>
+
+                <button type="button" onclick="generateFancyText()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    Generate Username Now!
+                </button>
+            </form>
+
+            <!-- Display Generated Username Suggestions as a List -->
+            <div class="mx-auto my-10 w-full max-w-max	 px-5 xl:px-0">
+                <h2 class="text-lg font-semibold mb-2">Suggested Usernames:</h2>
+
+                <ul id="usernameSuggestions" class="list-disc pl-5 space-y-2">
+                    <!-- Suggested usernames will be listed here -->
+                </ul>
+                <br>
+                <!-- <h3 class="text-lg font-semibold mb-2"><a href="#">Daily Mail Pinterest For More</a></h3> -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t px-4 py-6 text-center text-sm text-gray-500 bg-white">
+        <div class="container mx-auto">
+            &copy; 2025 MyApp. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        const menuBtn = document.getElementById("menu-btn");
+        const mobileMenu = document.getElementById("mobile-menu");
+        menuBtn.addEventListener("click", () => {
+            mobileMenu.classList.toggle("hidden");
         });
-      };
-      reader.readAsDataURL(file);
-    });
+    </script>
 
-    document.getElementById("processBtn").addEventListener("click", async () => {
-      if (!cropper) return alert("Upload and crop an image first.");
-
-      const quality = parseFloat(document.getElementById("qualityInput").value);
-      const targetDpi = parseInt(document.getElementById("dpiInput").value);
-
-      const croppedCanvas = cropper.getCroppedCanvas();
-      if (!croppedCanvas) return alert("Crop the image first.");
-
-      const blob = await new Promise(resolve => croppedCanvas.toBlob(resolve, "image/jpeg", quality));
-      const file = new File([blob], "cropped.jpg", { type: "image/jpeg" });
-
-      const options = {
-        maxWidth: croppedCanvas.width,
-        maxHeight: croppedCanvas.height,
-        initialQuality: quality,
-        useWebWorker: true,
-      };
-
-      const compressedBlob = await imageCompression(file, options);
-
-      // DPI manipulation (resampling)
-      const dpiRatio = targetDpi / 72;
-      const finalCanvas = document.createElement("canvas");
-      finalCanvas.width = croppedCanvas.width * dpiRatio;
-      finalCanvas.height = croppedCanvas.height * dpiRatio;
-      const ctx = finalCanvas.getContext("2d");
-      ctx.drawImage(croppedCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
-
-      finalCanvas.toBlob((finalBlob) => {
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(finalBlob);
-        link.download = "processed_image.jpg";
-        link.click();
-      }, "image/jpeg", quality);
-    });
-  </script>
 </body>
+<script>
+    const data =
+        { "categories": [{ "category": "Art & Design", "usernames": ["ArtistryWith[YourName]", "ArtWith[YourName]", "Colorful[YourName]", "CraftedBy[YourName]", "DesignBy[YourName]", "DesignInspo[YourName]", "GalleryWith[YourName]", "IllustrateWith[YourName]", "[YourName]ArtDiaries", "[YourName]Artistic"] }, { "category": "Astrology & Tarot", "usernames": ["AstroInsights[YourName]", "AstrologyEssentials[YourName]", "CelestialGuidance[YourName]", "DivineTarot[YourName]", "MysticalTarot[YourName]", "StellarReadings[YourName]", "TarotInsights[YourName]", "TarotMagic[YourName]", "TarotReadingsWith[YourName]", "TarotWith[YourName]"] }, { "category": "Beauty & Makeup", "usernames": ["BeautyBy[YourName]", "ChicBeauty[YourName]", "GlamBy[YourName]", "MakeupBy[YourName]", "MakeupWith[YourName]", "Radiant[YourName]", "[YourName]Allure", "[YourName]Beauty", "[YourName]BeautyBites", "[YourName]BeautyTips"] }, { "category": "Board Games & Tabletop Gaming", "usernames": ["BoardGameAdventures[YourName]", "BoardGameNerd[YourName]", "BoardGameReview[YourName]", "DiceAndStrategy[YourName]", "EpicBoardGames[YourName]", "GameNightGuru[YourName]", "GamingWith[YourName]", "StrategyAndFun[YourName]", "TabletopTreasure[YourName]", "TabletopWith[YourName]"] }, { "category": "Books & Literature", "usernames": ["BookLover[YourName]", "BooksWith[YourName]", "LitBy[YourName]", "LiteraryJourney[YourName]", "PageTurner[YourName]", "ReadingWith[YourName]", "[YourName]BookClub", "[YourName]Bookish", "[YourName]BookNook", "[YourName]BookReviews"] }, { "category": "Cars & Automobiles", "usernames": ["CarEnthusiast[YourName]", "ClassicCars[YourName]", "DriveWith[YourName]", "Gearhead[YourName]", "LuxuryCars[YourName]", "Performance[YourName]", "SpeedDemon[YourName]", "[YourName]AutoAdventures", "[YourName]AutoLife", "[YourName]Automotive"] }, { "category": "Celebrity News & Gossip", "usernames": ["BehindTheScenes[YourName]", "CelebNewsWith[YourName]", "CelebTalk[YourName]", "FamousFaces[YourName]", "GossipCorner[YourName]", "HollywoodInsider[YourName]", "StarGossip[YourName]", "[YourName]CelebrityBuzz", "[YourName]CelebrityUpdates", "[YourName]CelebrityWatch"] }, { "category": "Cultural Exploration", "usernames": ["CulturalAdventure[YourName]", "CulturalConnections[YourName]", "CulturalInsights[YourName]", "CulturalStories[YourName]", "DiscoverWith[YourName]", "DiverseCultures[YourName]", "ExploreCulture[YourName]", "TravelAndCulture[YourName]", "[YourName]CulturalAdventures", "[YourName]CulturalDiversity"] }, { "category": "DIY & Crafts", "usernames": ["CraftedBy[YourName]", "CreateWith[YourName]", "DIYIdeasBy[YourName]", "[YourName]ArtAndCrafts", "[YourName]Artisan", "[YourName]Crafting", "[YourName]CraftingJourney", "[YourName]CraftingJoy", "[YourName]CraftLife", "[YourName]Crafts"] }, { "category": "Education & Learning", "usernames": ["CuriousMind[YourName]", "EducationJourney[YourName]", "KnowledgeBy[YourName]", "LearnWith[YourName]", "Scholar[YourName]", "StudyWith[YourName]", "[YourName]Academic", "[YourName]BrainFood", "[YourName]Edu", "[YourName]EduInspo"] }, { "category": "Entrepreneurship", "usernames": ["BusinessTips[YourName]", "Entrepreneur[YourName]", "HustleWith[YourName]", "InnovateWith[YourName]", "LeadershipWith[YourName]", "MotivatedBy[YourName]", "StartUpWith[YourName]", "[YourName]Biz", "[YourName]BizInspo", "[YourName]BusinessMind"] }, { "category": "Fashion", "usernames": ["ChicStyle[YourName]", "Classy[YourName]", "Fashionista[YourName]", "GlamBy[YourName]", "OOTDWith[YourName]", "StyleWith[YourName]", "Trendy[YourName]", "[YourName]Chic", "[YourName]Fashion", "[YourName]FashionBlogger"] }, { "category": "Fashion Illustrations", "usernames": ["ArtisticFashion[YourName]", "ChicIllustrations[YourName]", "CreativeFashion[YourName]", "FashionDrawings[YourName]", "FashionSketch[YourName]", "IllustrateWith[YourName]", "IllustrativeStyles[YourName]", "StyleBySketch[YourName]", "StyleIllustrations[YourName]", "StylishSketches[YourName]"] }, { "category": "Fashion Trends", "usernames": ["FashionDiaries[YourName]", "FashionDiaries[YourName]", "FashionForward[YourName]", "FashionForward[YourName]", "FashionLover[YourName]", "FashionLover[YourName]", "LatestTrends[YourName]", "LatestTrends[YourName]", "StyleEssentials[YourName]", "StyleEssentials[YourName]"] }, { "category": "Fitness & Health", "usernames": ["CoreWith[YourName]", "FitLife[YourName]", "FitWith[YourName]", "Healthy[YourName]", "Mindful[YourName]", "StrengthBy[YourName]", "WellnessBy[YourName]", "[YourName]Active", "[YourName]FitJourney", "[YourName]Fitness"] }, { "category": "Food & Cooking", "usernames": ["CookWith[YourName]", "DeliciousWith[YourName]", "GourmetBy[YourName]", "KitchenWith[YourName]", "Savory[YourName]", "TastyBy[YourName]", "Yummy[YourName]", "[YourName]Chef", "[YourName]Cooking", "[YourName]CookingTips"] }, { "category": "Food Reviews & Blogging", "usernames": ["BitesWith[YourName]", "CulinaryExplorer[YourName]", "DishDelight[YourName]", "EatsBy[YourName]", "FoodieWith[YourName]", "FoodLover[YourName]", "SavoringWith[YourName]", "TastingWith[YourName]", "YummyBites[YourName]", "[YourName]CulinaryAdventures"] }, { "category": "Gaming", "usernames": ["CasualGamer[YourName]", "EpicGamer[YourName]", "Gamer[YourName]", "GamingAdventures[YourName]", "GamingWith[YourName]", "LevelUpWith[YourName]", "[YourName]GameChanger", "[YourName]GameMaster", "[YourName]GameOn", "[YourName]GamerGoals"] }, { "category": "Gardening", "usernames": ["EcoGardening[YourName]", "GardenInspo[YourName]", "GardenJoy[YourName]", "GardenWith[YourName]", "GrowingWith[YourName]", "NatureInYourBackyard[YourName]", "PlantLover[YourName]", "UrbanGardening[YourName]", "[YourName]BotanicalLife", "[YourName]FloralJourney"] }, { "category": "Hiking & Adventure", "usernames": ["AdventureAwaits[YourName]", "AdventureDiaries[YourName]", "Adventurous[YourName]", "HikeWith[YourName]", "HikingGoals[YourName]", "NatureAdventures[YourName]", "PeakExperience[YourName]", "TrailTales[YourName]", "[YourName]ActiveAdventures", "[YourName]AdventureSeeker"] }, { "category": "Home Decor", "usernames": ["ChicHome[YourName]", "CozyWith[YourName]", "HomeWith[YourName]", "StyledBy[YourName]", "TrendyHome[YourName]", "[YourName]ChicInteriors", "[YourName]CozyCorners", "[YourName]Decor", "[YourName]DecorGoals", "[YourName]DesignIdeas"] }, { "category": "Home Organization", "usernames": ["CleanAndClear[YourName]", "HomeOrder[YourName]", "NeatAndTidy[YourName]", "OrderlyHome[YourName]", "OrganizationTips[YourName]", "OrganizedLiving[YourName]", "OrganizeWith[YourName]", "OrganizeYourLife[YourName]", "SimplifyWith[YourName]", "SpaceSaver[YourName]"] }, { "category": "Influencer Marketing", "usernames": ["BrandCollaborations[YourName]", "ConnectingWith[YourName]", "DigitalInfluence[YourName]", "GrowthWith[YourName]", "InfluencerJourney[YourName]", "InfluencerLife[YourName]", "InfluencerTips[YourName]", "InspiringWith[YourName]", "MarketingWith[YourName]", "[YourName]BrandBuilding"] }, { "category": "Lifestyle", "usernames": ["ChicLifestyle[YourName]", "DailyWith[YourName]", "EverydayWith[YourName]", "LifestyleBy[YourName]", "LifeWith[YourName]", "TrendyLife[YourName]", "Vibrant[YourName]", "[YourName]Adventures", "[YourName]Essence", "[YourName]Essentials"] }, { "category": "Local Events & Activities", "usernames": ["ActivityGuide[YourName]", "CityEvents[YourName]", "CommunityEvents[YourName]", "EventsToExplore[YourName]", "EventsWith[YourName]", "HappeningsIn[YourName]", "InYourCity[YourName]", "LocalActivities[YourName]", "LocalLifeWith[YourName]", "WhatToSee[YourName]"] }, { "category": "Luxury Lifestyle", "usernames": ["ElegantBy[YourName]", "GourmetLifestyle[YourName]", "IndulgenceWith[YourName]", "LavishBy[YourName]", "LuxuryWith[YourName]", "OpulenceBy[YourName]", "RefinedTaste[YourName]", "[YourName]AffluentLife", "[YourName]ChicAndClassy", "[YourName]EliteStyle"] }, { "category": "Mental Health & Wellness", "usernames": ["BalanceWith[YourName]", "HealthyMind[YourName]", "MindfulWith[YourName]", "PositiveMind[YourName]", "WellnessWith[YourName]", "[YourName]EmotionalWellness", "[YourName]InnerPeace", "[YourName]MentalClarity", "[YourName]MentalHealthAdvocate", "[YourName]MentalJourney"] }, { "category": "Mindfulness & Meditation", "usernames": ["AwakenWith[YourName]", "CalmAndCentered[YourName]", "CalmWith[YourName]", "MeditateWith[YourName]", "MeditationMoments[YourName]", "MindfulMoments[YourName]", "MindfulnessJourney[YourName]", "MindfulnessMatters[YourName]", "[YourName]BreatheEasy", "[YourName]InnerPeace"] }, { "category": "Minimalism", "usernames": ["ClarityWith[YourName]", "EssentialsBy[YourName]", "LiveSimply[YourName]", "LivingWithLess[YourName]", "MindfulLiving[YourName]", "MinimalistJourney[YourName]", "Minimalist[YourName]", "MinimalLiving[YourName]", "SimplicityWith[YourName]", "[YourName]ConsciousConsumer"] }, { "category": "Motivation & Inspiration", "usernames": ["BelieveWith[YourName]", "DailyInspo[YourName]", "InspireAndThrive[YourName]", "InspireChange[YourName]", "InspiredBy[YourName]", "JourneyWith[YourName]", "MotivateWith[YourName]", "SparkJoyWith[YourName]", "Uplifted[YourName]", "[YourName]DreamBig"] }, { "category": "Music", "usernames": ["JamSession[YourName]", "MusicalMoments[YourName]", "MusicWith[YourName]", "PlaylistWith[YourName]", "RhythmsWith[YourName]", "SoundsOf[YourName]", "[YourName]Chords", "[YourName]InHarmony", "[YourName]LiveMusic", "[YourName]Melody"] }, { "category": "Nature & Wildlife", "usernames": ["ConservationWith[YourName]", "ExploreNature[YourName]", "GreenThumb[YourName]", "NaturePhotography[YourName]", "NatureWith[YourName]", "SustainableWith[YourName]", "WildAndFree[YourName]", "WildlifeAdventures[YourName]", "[YourName]AnimalAdvocate", "[YourName]EarthLover"] }, { "category": "Nostalgia & Retro", "usernames": ["BlastFromThePast[YourName]", "ClassicMoments[YourName]", "MemoriesBy[YourName]", "NostalgicVibes[YourName]", "OldiesButGoodies[YourName]", "RetroJourney[YourName]", "RetroVibes[YourName]", "ThrowbackWith[YourName]", "TimelessWith[YourName]", "[YourName]ClassicVibes"] }, { "category": "Parenting & Family", "usernames": ["FamilyBy[YourName]", "JoyfulFamily[YourName]", "KidsWith[YourName]", "MomLife[YourName]", "[YourName]FamilyAdventures", "[YourName]FamilyFun", "[YourName]FamilyGoals", "[YourName]FamilyMoments", "[YourName]FamilyTales", "[YourName]HappyFamily"] }, { "category": "Personal Finance", "usernames": ["FinanceWith[YourName]", "FinanceWith[YourName]", "MoneyTipsBy[YourName]", "MoneyTipsBy[YourName]", "SavvySpender[YourName]", "SavvySpender[YourName]", "SmartFinance[YourName]", "SmartFinance[YourName]", "WealthBy[YourName]", "WealthBy[YourName]"] }, { "category": "Pet Care", "usernames": ["FurryFriends[YourName]", "HappyPets[YourName]", "Pawsitive[YourName]", "PetAdviceBy[YourName]", "PetLover[YourName]", "PetParent[YourName]", "PetStories[YourName]", "[YourName]AnimalAdventures", "[YourName]AnimalLover", "[YourName]FourLeggedFriends"] }, { "category": "Photography", "usernames": ["CaptureWith[YourName]", "LensOf[YourName]", "PicsBy[YourName]", "SnapWith[YourName]", "[YourName]ArtOfPhotography", "[YourName]CapturedMoments", "[YourName]Clicking", "[YourName]CreativeClicks", "[YourName]Frames", "[YourName]Imagery"] }, { "category": "Photography Tips & Tricks", "usernames": ["CaptureTheMoment[YourName]", "CapturingMoments[YourName]", "ExplorePhotography[YourName]", "FocusOnPhotography[YourName]", "PhotographyTips[YourName]", "PhotoInspiration[YourName]", "PhotoTipsWith[YourName]", "PicturePerfect[YourName]", "SnapWith[YourName]", "TipsForPhotographers[YourName]"] }, { "category": "Relationship Advice", "usernames": ["CommunicationWith[YourName]", "CoupleAdvice[YourName]", "DatingTips[YourName]", "EmpoweredLove[YourName]", "HealthyRelationships[YourName]", "IntimacyWith[YourName]", "LoveWith[YourName]", "[YourName]AdviceForLove", "[YourName]Connection", "[YourName]HeartfeltAdvice"] }, { "category": "Skincare", "usernames": ["FlawlessSkin[YourName]", "GlowingWith[YourName]", "GlowUp[YourName]", "HealthySkin[YourName]", "PamperedSkin[YourName]", "RadiantSkin[YourName]", "SerumBy[YourName]", "SkincareWith[YourName]", "[YourName]BeautyRoutine", "[YourName]BeautySecrets"] }, { "category": "Small Business Tips", "usernames": ["BizGrowth[YourName]", "BizTipsWith[YourName]", "EntrepreneurLife[YourName]", "EntrepreneurTips[YourName]", "GrowYourBiz[YourName]", "MarketingForSmallBiz[YourName]", "SmallBizGuru[YourName]", "SmallBizSuccess[YourName]", "SmartBizMoves[YourName]", "StartupAdvice[YourName]"] }, { "category": "Social Issues & Activism", "usernames": ["ActivismWith[YourName]", "AdvocateFor[YourName]", "BeTheChange[YourName]", "ChangeThrough[YourName]", "CommunityVoices[YourName]", "ImpactWith[YourName]", "SocialJusticeWith[YourName]", "SpeakUpWith[YourName]", "StandFor[YourName]", "VoicesForChange[YourName]"] }, { "category": "Sports", "usernames": ["Active[YourName]", "Champion[YourName]", "FitAndActive[YourName]", "GameChanger[YourName]", "PassionateAbout[YourName]", "SportsInspiration[YourName]", "SportsJourney[YourName]", "SportsWith[YourName]", "WinningWith[YourName]", "[YourName]Athlete"] }, { "category": "Sustainable Living", "usernames": ["ConsciousLiving[YourName]", "EcoFriendly[YourName]", "GreenLiving[YourName]", "SustainableWith[YourName]", "[YourName]EarthFriendly", "[YourName]EcoAdventures", "[YourName]EcoInspiration", "[YourName]EcoJourney", "[YourName]EcoTips", "[YourName]EcoWarrior"] }, { "category": "Tech & Gadgets", "usernames": ["GizmoGuru[YourName]", "TechBy[YourName]", "TechSavvy[YourName]", "[YourName]DeviceDiva", "[YourName]DigitalLife", "[YourName]DigitalTrends", "[YourName]FutureTech", "[YourName]GadgetGeek", "[YourName]GadgetGoals", "[YourName]GadgetGuide"] }, { "category": "Travel", "usernames": ["ExploreWith[YourName]", "JourneyOf[YourName]", "JourneyWith[YourName]", "TravelTales[YourName]", "TravelWith[YourName]", "Wanderlust[YourName]", "[YourName]Adventures", "[YourName]AdventureSeeker", "[YourName]AroundTheWorld", "[YourName]Destination"] }, { "category": "Travel Vlogging", "usernames": ["Explorer[YourName]", "FootprintsOf[YourName]", "Globetrotter[YourName]", "JourneyWith[YourName]", "TravelInspo[YourName]", "TravelMoments[YourName]", "TravelTales[YourName]", "VlogWith[YourName]", "WanderlustWith[YourName]", "[YourName]Adventures"] }, { "category": "Vintage & Thrift Shopping", "usernames": ["OldiesButGoodies[YourName]", "RetroTreasures[YourName]", "ThriftedChic[YourName]", "ThriftedFinds[YourName]", "ThriftFinds[YourName]", "ThriftHauls[YourName]", "ThriftingWith[YourName]", "UniqueFinds[YourName]", "VintageLover[YourName]", "VintageShopper[YourName]"] }, { "category": "Virtual Reality & AR", "usernames": ["AugmentedLife[YourName]", "ExploreWithVR[YourName]", "GamingInVR[YourName]", "ImmersiveExperiences[YourName]", "VirtualReality[YourName]", "VRAdventures[YourName]", "VRTrends[YourName]", "VRWith[YourName]", "[YourName]ARExperience", "[YourName]AugmentedAdventures"] }, { "category": "Wholesome Content & Positivity", "usernames": ["InspiringJoy[YourName]", "KindnessWith[YourName]", "LightAndLove[YourName]", "OptimisticOutlook[YourName]", "PositivityAdvocate[YourName]", "PositivityJourney[YourName]", "SpreadPositivity[YourName]", "UpliftWith[YourName]", "WholesomeInspiration[YourName]", "WholesomeMoments[YourName]"] }] }
+        ;
+
+    // Function to populate the category dropdown dynamically
+    function populateCategorySelect() {
+        const selectElement = document.getElementById('categorySelect');
+        const defaultOption = document.createElement('option');
+        defaultOption.value = "";
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        defaultOption.textContent = "Select a category";
+        selectElement.appendChild(defaultOption);
+
+        data.categories.forEach((category, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = category.category;
+            selectElement.appendChild(option);
+        });
+    }
+
+    // Call the function to populate the dropdown when the page loads
+    populateCategorySelect();
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function generateFancyText() {
+        const input = document.getElementById('inputText').value;
+        const categoryIndex = document.getElementById('categorySelect').value;
+
+        if (categoryIndex === "" || input.trim() === "") {
+            document.getElementById('usernameSuggestions').innerHTML = "<li class='text-red-500'>Please select a category and enter your name.</li>";
+            return;
+        }
+
+        const category = data.categories[categoryIndex];
+        const phrases = category.usernames.map(username => username.replace("[YourName]", input));
+        const shuffledPhrases = shuffleArray(phrases.slice());
+
+        // Clear previous suggestions
+        const suggestionsContainer = document.getElementById('usernameSuggestions');
+        suggestionsContainer.innerHTML = '';
+
+        // Display shuffled usernames as list items
+        shuffledPhrases.slice(0, 10).forEach(username => {
+            const listItem = document.createElement('li');
+            const usernameLink = document.createElement('a');
+            usernameLink.href = `/usernamel/${username}`;
+            usernameLink.className = 'text-blue-600 hover:text-blue-800';
+            usernameLink.textContent = `@${username}`;
+            listItem.appendChild(usernameLink);
+            suggestionsContainer.appendChild(listItem);
+        });
+    }
+</script>
 </html>
