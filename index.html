@@ -146,7 +146,7 @@
         shuffledPhrases.slice(0, 10).forEach(username => {
             const listItem = document.createElement('li');
             const usernameLink = document.createElement('a');
-            usernameLink.href = `/usernamel/${username}`;
+            usernameLink.href = `/username/${username}`;
             usernameLink.className = 'text-blue-600 hover:text-blue-800';
             usernameLink.textContent = `@${username}`;
             listItem.appendChild(usernameLink);
